@@ -1,22 +1,742 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>中国职工养老金估算器</title>
-<style>
-:root{--ink:#1c2940;--muted:#718097;--blue:#315efb;--line:#e5eaf2;--bg:#f4f7fb}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0,#e7eeff,transparent 34%),var(--bg);color:var(--ink);font:15px/1.55 "Microsoft YaHei UI","PingFang SC",system-ui,sans-serif}main{max-width:1080px;margin:auto;padding:40px 22px}.brand{font-weight:700;color:#315efb}.hero{margin:42px 0 26px;max-width:680px}.eyebrow{color:#315efb;font-size:12px;font-weight:700;letter-spacing:.12em}.hero h1{font-size:clamp(32px,5vw,48px);line-height:1.15;letter-spacing:-.04em;margin:9px 0}.hero p{color:var(--muted);font-size:16px;margin:0}.layout{display:grid;grid-template-columns:1fr .92fr;gap:20px;align-items:start}.card{background:#fff;border:1px solid #e7ecf3;border-radius:20px;box-shadow:0 16px 50px #1b31500d;padding:24px}.head{display:flex;justify-content:space-between;margin-bottom:18px}.head h2{font-size:17px;margin:0}.head span{color:#8b97a8;font-size:12px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field label{display:flex;justify-content:space-between;font-size:13px;font-weight:650;margin-bottom:7px}.hint,.help{font-size:11px;color:#8b97a8;font-weight:400}.control{position:relative}.control input,.control select{width:100%;height:46px;border:1px solid var(--line);border-radius:10px;padding:0 42px 0 12px;font:inherit;color:var(--ink);background:#fff;outline:none}.control input:focus,.control select:focus{border-color:#8aa1ff;box-shadow:0 0 0 3px #315efb19}.unit{position:absolute;right:12px;top:12px;color:#8793a5;font-size:12px}.help{margin:5px 0 0}.full{grid-column:1/-1}.toggle{display:flex;gap:8px;align-items:center;font-size:12px;color:#627188}.toggle input{accent-color:#315efb}.hidden{display:none!important}.sep{grid-column:1/-1;border:0;border-top:1px solid #edf0f5;margin:2px 0}.actions{display:flex;gap:10px;margin-top:19px}.button{height:45px;border-radius:10px;padding:0 17px;font:inherit;font-weight:700;cursor:pointer}.primary{flex:1;background:#315efb;color:white;border:0}.secondary{background:white;border:1px solid var(--line);color:#65738a}.result{position:sticky;top:18px;overflow:hidden;background:linear-gradient(145deg,#fff 58%,#f0f4ff)}.small{font-size:13px;color:var(--muted)}.total{font-size:clamp(42px,6vw,62px);font-weight:750;letter-spacing:-.05em;line-height:1.2;margin:7px 0}.total span{font-size:17px;letter-spacing:0;color:#78869a}.break{display:grid;gap:10px;margin-top:20px}.row{display:flex;justify-content:space-between;align-items:center;background:#f7f9fc;border:1px solid #edf1f6;border-radius:12px;padding:13px}.row span{font-size:13px;color:#5f6e83}.row small{display:block;color:#929eae;font-size:11px}.row b{font-size:17px}.formula{margin-top:15px;background:#eaf7f2;padding:13px;border-radius:12px;color:#426a5f;font-size:12px}.alert{display:none;background:#fff3e4;color:#805b25;border-radius:10px;padding:10px;margin-top:12px;font-size:12px}.alert.show{display:block}.disclaimer{font-size:11px;color:#8995a6;margin-top:14px;line-height:1.65}.sources{margin-top:20px;padding:16px 18px;border:1px solid #e7ecf3;background:#ffffffa6;border-radius:14px;font-size:11px;color:#78859a}.sources a{color:#536dd1;text-decoration:none}.foot{text-align:center;color:#98a2b1;font-size:11px;margin-top:17px}@media(max-width:760px){main{padding:25px 15px}.hero{margin-top:30px}.layout{grid-template-columns:1fr}.result{position:static;grid-row:1}.form{grid-row:2}}@media(max-width:450px){.fields{grid-template-columns:1fr}.full,.sep{grid-column:auto}.card{padding:19px}.actions{flex-direction:column-reverse}.secondary{width:100%}}
-</style></head><body><main><div class="brand">◈ 退休规划小工具</div><section class="hero"><div class="eyebrow">PENSION PLANNER</div><h1>大概能领多少养老金？</h1><p>填入缴费年限、职业生涯平均缴费工资和当地计发基数，快速估算职工基本养老金月金额。</p></section><div class="layout">
-<form class="card form" id="form"><div class="head"><h2>填写你的情况</h2><span>约 1 分钟</span></div><div class="fields">
-<div class="field"><label for="years">累计缴费年限 <span class="hint">不是简单日历工龄</span></label><div class="control"><input id="years" type="number" min="1" max="60" step=".5" value="30"><span class="unit">年</span></div><p class="help">含实际缴费与认可年限。</p></div>
-<div class="field"><label for="salary">月均缴费工资 <span class="hint">职业生涯平均估算</span></label><div class="control"><input id="salary" type="number" min="0" step="100" value="10000"><span class="unit">元</span></div><p class="help">尽量填历年缴费基数平均值。</p></div>
-<div class="field"><label for="local">当地月计发基数 <span class="hint">退休地上一年度</span></label><div class="control"><input id="local" type="number" min="1000" step="100" value="8000"><span class="unit">元</span></div><p class="help">未来退休可用当前数据粗估。</p></div>
-<div class="field"><label for="age">预计退休年龄 <span class="hint">影响计发月数</span></label><div class="control"><select id="age"></select></div><p class="help">实际年龄受出生年月、性别和政策影响。</p></div><hr class="sep">
-<div class="field full"><label>个人账户储存额</label><label class="toggle"><input id="manual" type="checkbox">我知道账户余额，手动填写</label></div><div class="field full hidden" id="balanceWrap"><div class="control"><input id="balance" type="number" min="0" step="1000" placeholder="例如 180000"><span class="unit">元</span></div><p class="help">输入预计退休时账户余额；当前余额需考虑未来缴费和利息。</p></div>
-<div class="field full" id="rateWrap"><label for="rate">个人账户年收益假设</label><div class="control"><input id="rate" type="number" min="0" max="12" step=".1" value="2"><span class="unit">%</span></div></div></div><div class="actions"><button class="button secondary" type="reset">恢复示例</button><button class="button primary" type="submit">更新估算结果 →</button></div></form>
-<section class="card result" aria-live="polite"><div class="small">预计每月基本养老金</div><div class="total" id="total">— <span>元 / 月</span></div><div class="small">以填写假设估算，实际待遇以社保经办机构核定为准。</div><div class="break"><div class="row"><span>基础养老金<small>年限、缴费指数与当地基数</small></span><b id="basic">—</b></div><div class="row"><span>个人账户养老金<small>账户储存额 ÷ 计发月数</small></span><b id="personal">—</b></div></div><div class="formula" id="formula">—</div><div class="alert" id="alert"></div><div class="disclaimer">简化估算，未计算过渡性养老金、地方加发、缴费中断、工资增长及未来政策调整；不构成待遇核定或投资建议。</div></section></div>
-<aside class="sources"><b>计算口径：</b>基础养老金＝退休地月计发基数 ×（1＋本人平均缴费指数）÷2 × 缴费年限 ×1%；个人账户养老金＝账户储存额 ÷ 计发月数。未手填账户余额时，按月均缴费工资的8%逐月入账，并按设定收益假设估算。参考：<a href="https://www.jiangsu.gov.cn/art/2025/10/23/art_92895_11661402.html" target="_blank" rel="noreferrer">江苏省人社厅计算说明</a>、<a href="https://www.mohrss.gov.cn/fgs/syshehuibaoxianfa/201208/t20120806_28572.html" target="_blank" rel="noreferrer">人社部《社会保险法》释义</a>。计发月数不是领取期限。</aside><div class="foot">所有计算在本机浏览器完成，输入内容不会上传或保存。</div></main>
-<script>
-const divisors={40:233,41:230,42:226,43:223,44:220,45:216,46:212,47:208,48:204,49:199,50:195,51:190,52:185,53:180,54:175,55:170,56:164,57:158,58:152,59:145,60:139,61:132,62:125,63:117,64:109,65:101,66:93,67:84,68:75,69:65,70:56},byId=id=>document.getElementById(id),ageSelect=byId("age");
-for(let n=40;n<=70;n++){const o=document.createElement("option");o.value=n;o.textContent=n+" 岁（"+divisors[n]+" 个月）";if(n===60)o.selected=true;ageSelect.append(o)}
-const money=x=>new Intl.NumberFormat("zh-CN",{maximumFractionDigits:0}).format(Math.max(0,Math.round(x))),toggle=byId("manual"),form=byId("form");
-function mode(){byId("balanceWrap").classList.toggle("hidden",!toggle.checked);byId("rateWrap").classList.toggle("hidden",toggle.checked)}
-function calc(){const years=Number(byId("years").value),salary=Number(byId("salary").value),local=Number(byId("local").value),age=Number(ageSelect.value),manual=toggle.checked,alert=byId("alert");alert.classList.remove("show");if(!years||years<1||!salary||salary<0||!local||local<=0){alert.textContent="请检查年限、工资和当地计发基数。";alert.classList.add("show");return}const raw=salary/local,index=Math.max(.6,Math.min(3,raw)),basic=local*(1+index)/2*years*.01;let balance,assumption;if(manual){balance=Number(byId("balance").value);if(!Number.isFinite(balance)||balance<0){alert.textContent="请填写有效的个人账户余额。";alert.classList.add("show");return}assumption="采用手填账户余额 "+money(balance)+" 元。"}else{const rate=Math.max(0,Math.min(12,Number(byId("rate").value)||0))/100,mr=Math.pow(1+rate,1/12)-1,months=Math.round(years*12),deposit=salary*.08;balance=mr===0?deposit*months:deposit*(Math.pow(1+mr,months)-1)/mr;assumption="按月工资 "+money(salary)+" 元的 8% 入账，年收益率假设 "+(rate*100).toFixed(1)+"%。"}const personal=balance/divisors[age];byId("total").innerHTML=money(basic+personal)+' <span>元 / 月</span>';byId("basic").textContent=money(basic)+" 元";byId("personal").textContent=money(personal)+" 元";byId("formula").textContent="平均缴费指数约 "+index.toFixed(2)+"；计发月数 "+divisors[age]+"；"+assumption;if(raw<.6||raw>3){alert.textContent="本次已将缴费指数限制在 0.6 至 3.0；各地基数上下限可能不同。";alert.classList.add("show")}}
-form.addEventListener("submit",e=>{e.preventDefault();calc()});form.addEventListener("reset",()=>setTimeout(()=>{toggle.checked=false;mode();calc()},0));toggle.addEventListener("change",mode);ageSelect.addEventListener("change",calc);mode();calc();
-</script></body></html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>中国职工养老金估算器</title>
+        <style>
+            :root {
+                --ink: #1c2940;
+                --muted: #718097;
+                --blue: #315efb;
+                --line: #e5eaf2;
+                --bg: #f4f7fb;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                background: radial-gradient(ellipse at 85% 0, #e7eeff, transparent 34%), var(--bg);
+                color: var(--ink);
+                font:
+                    15px/1.55 "Microsoft YaHei UI",
+                    "PingFang SC",
+                    system-ui,
+                    sans-serif;
+            }
+            main {
+                max-width: 1080px;
+                margin: auto;
+                padding: 40px 22px;
+            }
+            .brand {
+                font-weight: 700;
+                color: #315efb;
+            }
+            .hero {
+                margin: 42px 0 26px;
+                max-width: 680px;
+            }
+            .eyebrow {
+                color: #315efb;
+                font-size: 12px;
+                font-weight: 700;
+                letter-spacing: 0.12em;
+            }
+            .hero h1 {
+                font-size: clamp(32px, 5vw, 48px);
+                line-height: 1.15;
+                letter-spacing: -0.04em;
+                margin: 9px 0;
+            }
+            .hero .test-note {
+                color: #b42332;
+                font-size: 14px;
+                font-weight: 700;
+                margin: 0 0 10px;
+            }
+            .hero p {
+                color: var(--muted);
+                font-size: 16px;
+                margin: 0;
+            }
+            .layout {
+                display: grid;
+                grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.85fr);
+                gap: 20px;
+                align-items: start;
+            }
+            .card {
+                background: #fff;
+                border: 1px solid #e7ecf3;
+                border-radius: 20px;
+                box-shadow: 0 16px 50px #1b31500d;
+                padding: 24px;
+            }
+            .head {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 18px;
+            }
+            .head h2 {
+                font-size: 17px;
+                margin: 0;
+            }
+            .head span {
+                color: #8b97a8;
+                font-size: 12px;
+            }
+            .fields {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 20px 16px;
+            }
+            .field label {
+                display: flex;
+                justify-content: space-between;
+                font-size: 13px;
+                font-weight: 650;
+                margin-bottom: 7px;
+            }
+            .hint,
+            .help {
+                font-size: 11px;
+                color: #8b97a8;
+                font-weight: 400;
+            }
+            .control {
+                position: relative;
+            }
+            .control input,
+            .control select {
+                width: 100%;
+                height: 46px;
+                border: 1px solid var(--line);
+                border-radius: 10px;
+                padding: 0 42px 0 12px;
+                font: inherit;
+                color: var(--ink);
+                background: #fff;
+                outline: none;
+            }
+            .control input:focus,
+            .control select:focus {
+                border-color: #8aa1ff;
+                box-shadow: 0 0 0 3px #315efb19;
+            }
+            .unit {
+                position: absolute;
+                right: 12px;
+                top: 12px;
+                color: #8793a5;
+                font-size: 12px;
+            }
+            .help {
+                margin: 6px 0 0;
+                font-size: 12px;
+                line-height: 1.65;
+                color: #5d6c80;
+            }
+            .full {
+                grid-column: 1/-1;
+            }
+            .field .toggle {
+                justify-content: flex-start;
+                margin-top: 8px;
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                font-size: 12px;
+                color: #627188;
+            }
+            .toggle input {
+                accent-color: #315efb;
+            }
+            .hidden {
+                display: none !important;
+            }
+            .sep {
+                grid-column: 1/-1;
+                border: 0;
+                border-top: 1px solid #edf0f5;
+                margin: 2px 0;
+            }
+            .actions {
+                display: flex;
+                gap: 10px;
+                margin-top: 19px;
+            }
+            .button {
+                height: 45px;
+                border-radius: 10px;
+                padding: 0 17px;
+                font: inherit;
+                font-weight: 700;
+                cursor: pointer;
+            }
+            .primary {
+                flex: 1;
+                background: #315efb;
+                color: white;
+                border: 0;
+            }
+            .secondary {
+                background: white;
+                border: 1px solid var(--line);
+                color: #65738a;
+            }
+            .result {
+                position: sticky;
+                top: 18px;
+                overflow: hidden;
+                background: linear-gradient(145deg, #fff 58%, #f0f4ff);
+            }
+            .small {
+                font-size: 13px;
+                color: var(--muted);
+            }
+            .total {
+                font-size: clamp(42px, 6vw, 62px);
+                font-weight: 750;
+                letter-spacing: -0.05em;
+                line-height: 1.2;
+                margin: 7px 0;
+            }
+            .total span {
+                font-size: 17px;
+                letter-spacing: 0;
+                color: #78869a;
+            }
+            .break {
+                display: grid;
+                gap: 10px;
+                margin-top: 20px;
+            }
+            .row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: #f7f9fc;
+                border: 1px solid #edf1f6;
+                border-radius: 12px;
+                padding: 13px;
+            }
+            .row span {
+                font-size: 13px;
+                color: #5f6e83;
+            }
+            .row small {
+                display: block;
+                color: #929eae;
+                font-size: 11px;
+            }
+            .row b {
+                font-size: 17px;
+            }
+            .formula {
+                margin-top: 15px;
+                background: #eaf7f2;
+                padding: 13px;
+                border-radius: 12px;
+                color: #426a5f;
+                font-size: 12px;
+            }
+            .alert {
+                display: none;
+                background: #fff3e4;
+                color: #805b25;
+                border-radius: 10px;
+                padding: 10px;
+                margin-top: 12px;
+                font-size: 12px;
+            }
+            .alert.show {
+                display: block;
+            }
+            .disclaimer {
+                font-size: 11px;
+                color: #8995a6;
+                margin-top: 14px;
+                line-height: 1.65;
+            }
+            .sources {
+                margin-top: 20px;
+                padding: 16px 18px;
+                border: 1px solid #e7ecf3;
+                background: #ffffffa6;
+                border-radius: 14px;
+                font-size: 11px;
+                color: #78859a;
+            }
+            .sources a {
+                color: #536dd1;
+                text-decoration: none;
+            }
+            .foot {
+                text-align: center;
+                color: #98a2b1;
+                font-size: 11px;
+                margin-top: 17px;
+            }
+            @media (max-width: 760px) {
+                main {
+                    padding: 25px 15px;
+                }
+                .hero {
+                    margin-top: 30px;
+                }
+                .layout {
+                    grid-template-columns: 1fr;
+                }
+                .result {
+                    position: static;
+                    grid-row: 2;
+                }
+                .form {
+                    grid-row: 1;
+                }
+            }
+            @media (max-width: 450px) {
+                .fields {
+                    grid-template-columns: 1fr;
+                }
+                .full,
+                .sep {
+                    grid-column: auto;
+                }
+                .card {
+                    padding: 19px;
+                }
+                .actions {
+                    flex-direction: column-reverse;
+                }
+                .secondary {
+                    width: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <div class="brand">◈ 退休规划小工具</div>
+            <section class="hero">
+                <div class="eyebrow">PENSION PLANNER</div>
+                <h1>大概能领多少养老金？</h1>
+                <p class="test-note">测试仅供娱乐</p>
+                <p>
+                    选好退休地，再填你交了多少年、平时按多少钱交养老保险，就能估算退休后每月能领多少。
+                </p>
+            </section>
+            <div class="layout">
+                <form class="card form" id="form">
+                    <div class="head">
+                        <h2>填写你的情况</h2>
+                        <span>约 1 分钟</span>
+                    </div>
+                    <div class="fields">
+                        <div class="field full">
+                            <label for="coverage">你的职工养老保险怎么缴？</label>
+                            <div class="control">
+                                <select id="coverage" aria-describedby="coverageHelp">
+                                    <option value="employee">单位参保（含由个体工商户参保的雇员）</option>
+                                    <option value="freelance">自由职业者等灵活就业人员，自己参保</option>
+                                    <option value="business">无雇工个体工商户，自己参保</option>
+                                </select>
+                            </div>
+                            <p class="help" id="coverageHelp" aria-live="polite">单位和个人共同缴费。缴费基数、年限等条件相同时，三种方式算出的月养老金相同。</p>
+                            <p class="help">适用于企业职工基本养老保险。按年缴纳城乡居民养老保险的人员适用另一套待遇规则。</p>
+                        </div>
+                        <div class="field full">
+                            <label for="region">预计在哪里领取职工养老金？</label>
+                            <div class="control">
+                                <select id="region">
+                                    <option value="">自己填写（默认金额仅作示例）</option>
+                                    <option value="北京" data-base="12049" data-year="2025年"
+                                        data-source="https://www.beijing.gov.cn/cs/gncs/zcwj/202603/t20260327_4568297.html" data-note="">北京</option>
+                                    <option value="天津" data-base="9417" data-year="2025年"
+                                        data-source="https://www.tj.gov.cn/sy/tjxw/202511/t20251118_7179836.html" data-note="">天津</option>
+                                    <option value="河北" data-base="7410" data-year="2025年"
+                                        data-source="https://hrlib.ciic-cloud.cn/news/info?id=01k5rd7f3sfznkhmpjqs0f5m8y" data-note="">河北</option>
+                                    <option value="山西" data-base="7253" data-year="2025年"
+                                        data-source="https://zc.51shebao.com/detail/839909" data-note="">山西</option>
+                                    <option value="内蒙古" data-base="8179" data-year="2025年"
+                                        data-source="https://rsj.baotou.gov.cn/ywdt/gzdt/202606/t20260622_928873.html" data-note="">内蒙古</option>
+                                    <option value="辽宁 · 除沈阳、大连" data-base="7346" data-year="2025年"
+                                        data-source="https://gtm-cn-2r42llmgk0b.liaoning.chinatax.gov.cn/art/2025/9/15/art_5869_7692.html" data-note="">辽宁 · 除沈阳、大连</option>
+                                    <option value="辽宁 · 沈阳" data-base="8390" data-year="2025年"
+                                        data-source="https://liaoning.chinatax.gov.cn/art/2025/9/15/art_5869_7692.html" data-note="">辽宁 · 沈阳</option>
+                                    <option value="辽宁 · 大连" data-base="8956" data-year="2025年"
+                                        data-source="https://liaoning.chinatax.gov.cn/art/2025/9/15/art_5869_7692.html" data-note="">辽宁 · 大连</option>
+                                    <option value="吉林 · 其他地区（非农垦企业）" data-base="7322.08" data-year="2025年"
+                                        data-source="https://xxgk.jl.gov.cn/zcbm/fgw_97992/xxgkmlqy/202509/t20250922_9324837.html" data-note="按公布的年基数除以 12 换算。">吉林 · 其他地区（非农垦企业）</option>
+                                    <option value="吉林 · 长春（非农垦企业）" data-base="7978.25" data-year="2025年"
+                                        data-source="https://xxgk.jl.gov.cn/zcbm/fgw_97992/xxgkmlqy/202509/t20250922_9324837.html" data-note="按公布的年基数除以 12 换算。">吉林 · 长春（非农垦企业）</option>
+                                    <option value="吉林 · 农垦企业" data-base="2223.42" data-year="2025年"
+                                        data-source="https://xxgk.jl.gov.cn/zcbm/fgw_97992/xxgkmlqy/202509/t20250922_9324837.html" data-note="按公布的年基数除以 12 换算。">吉林 · 农垦企业</option>
+                                    <option value="黑龙江" data-base="7705" data-year="2026年"
+                                        data-source="https://zc.51shebao.com/detail/840254" data-note="">黑龙江</option>
+                                    <option value="上海" data-base="12577" data-year="2026年"
+                                        data-source="https://shanghai.chinatax.gov.cn/tax/zcfw/rdwd/202608/t481376.html" data-note="采用上年度全口径城镇单位就业人员月平均工资。">上海</option>
+                                    <option value="江苏" data-base="7216" data-year="2019年下半年"
+                                        data-source="https://chinajob.mohrss.gov.cn/c/2019-06-26/115744.shtml" data-note="历史标准，估算其他年份时请手动填写当年基数。">江苏</option>
+                                    <option value="浙江" data-base="8537" data-year="2026年"
+                                        data-source="https://hrlib.ciic-cloud.cn/news/info?id=01m4f3zq07fxcw61gnzv9j4pxy" data-note="">浙江</option>
+                                    <option value="安徽" data-base="7999" data-year="2025年"
+                                        data-source="https://www.ahlx.gov.cn/Jczwgk/show/3644517.html" data-note="">安徽</option>
+                                    <option value="福建" data-base="8011" data-year="2026年"
+                                        data-source="https://rst.fj.gov.cn/zw/zfxxgk/zfxxgkml/zyywgz/ldgx/202611/t20261117_7250820.htm" data-note="">福建</option>
+                                    <option value="江西" data-base="7054" data-year="2025年"
+                                        data-source="https://www.jxln.gov.cn/lnxxxgk/zcwjscbhg/202512/8aa82bef0c2c4fcca30840e9549bc177.shtml" data-note="">江西</option>
+                                    <option value="山东 · 除菏泽" data-base="7831" data-year="2025年"
+                                        data-source="https://file.m12333.cn/upfile/download/65b59c91-3653-8b41-ba87-6c0647f126b3.pdf" data-note="">山东 · 除菏泽</option>
+                                    <option value="山东 · 菏泽" data-base="" data-year="2025年"
+                                        data-source="https://file.m12333.cn/upfile/download/65b59c91-3653-8b41-ba87-6c0647f126b3.pdf" data-note="省级通知将菏泽企业职工单列。">山东 · 菏泽（手填基数）</option>
+                                    <option value="河南" data-base="" data-year="2025年"
+                                        data-source="https://shbx.hrss.henan.gov.cn/hnsi/zhengce/fagui/webinfo/1600124768954077.htm" data-note="请核对待遇领取地的适用口径。">河南（手填基数）</option>
+                                    <option value="湖北" data-base="" data-year="2025年"
+                                        data-source="https://rst.hubei.gov.cn/zfxxgk/fdzdgknr/qtzdgknr/jytabl/202509/t20250909_5767005.shtml" data-note="本省对低收入参保人员有待遇倾斜，本站只作简化估算。">湖北（手填基数）</option>
+                                    <option value="湖南" data-base="7694" data-year="2025年"
+                                        data-source="https://rst.hunan.gov.cn/rst/xxgk/zcfg/zxzc/202509/t20250922_33809937.html" data-note="">湖南</option>
+                                    <option value="广东 · 除深圳" data-base="9493" data-year="2025年"
+                                        data-source="https://guangdong.chinatax.gov.cn/gdsw/ssfggds/2025-10/27/content_ba2a20bf040648e089f9edf9f557fa2b.shtml" data-note="">广东 · 除深圳</option>
+                                    <option value="广东 · 深圳" data-base="11293" data-year="2025年"
+                                        data-source="https://hrss.sz.gov.cn/zmhd/cjwt/cjwt/shbz/content/post_12493488.html" data-note="">广东 · 深圳</option>
+                                    <option value="广西" data-base="6983" data-year="2025年"
+                                        data-source="https://zc.51shebao.com/detail/838660" data-note="">广西</option>
+                                    <option value="海南" data-base="7599" data-year="2022年"
+                                        data-source="https://hrlib.ciic-cloud.cn/news/info?id=79b9fd38626e40e194656d73acace411" data-note="历史标准。">海南</option>
+                                    <option value="重庆" data-base="8240" data-year="2025年"
+                                        data-source="https://www.chinalawyer.co/blog/wenshu-7ecb063a49f2/" data-note="">重庆</option>
+                                    <option value="四川" data-base="" data-year="2025年"
+                                        data-source="https://www.hys.gov.cn/hysrmzfw/zffz/pc/content/content_2004109007214288896.html" data-note="链接为 2024 年四川企业退休待遇核定实例。">四川（手填基数）</option>
+                                    <option value="贵州" data-base="7324.5" data-year="2025年"
+                                        data-source="https://gz.people.com.cn/n2/2025/0923/c411142-41360594.html" data-note="按年平均工资 87894 元除以 12 换算。">贵州</option>
+                                    <option value="云南" data-base="8265" data-year="2025年"
+                                        data-source="https://hrss.yn.gov.cn/NewsView.aspx?cid=552&amp;isZt=7&amp;nid=63062&amp;pid=971" data-note="">云南</option>
+                                    <option value="西藏" data-base="11954" data-year="2026年"
+                                        data-source="https://hrss.xizang.gov.cn/xwzx/tzgg/202609/t20260914_558610.html" data-note="">西藏</option>
+                                    <option value="陕西" data-base="6914" data-year="2021年"
+                                        data-source="https://hrlib.ciic-cloud.cn/news/info?id=76673c197f0d47bdbaaa1d21a9753c8a" data-note="历史标准。">陕西</option>
+                                    <option value="甘肃" data-base="7594" data-year="2024年"
+                                        data-source="https://www.jyg.gov.cn/rsj/xwdt/bmdt/art/2025/art_2de3800b28314efb932da6c79eda737d.html" data-note="历史标准。">甘肃</option>
+                                    <option value="青海" data-base="9056" data-year="2025年"
+                                        data-source="https://m.thepaper.cn/baijiahao_31664625" data-note="">青海</option>
+                                    <option value="宁夏" data-base="8366" data-year="2025年"
+                                        data-source="https://hrss.nx.gov.cn/xxgk/zcj/zcfg/shbz/202509/t20250921_5030586.html" data-note="">宁夏</option>
+                                    <option value="新疆" data-base="" data-year="2025年"
+                                        data-source="https://www.xinjiang.gov.cn/xinjiang/c112543/202311/f1560797b2c7442a8b975c2cadcda6ee.shtml" data-note="链接为自治区企业职工基本养老金计发办法。">新疆（手填基数）</option>
+                                </select>
+                            </div>
+                            <p class="help">选你退休后领养老金的地方。选好后，请看下方金额对应哪一年。</p>
+                            <p class="help" aria-live="polite">
+                                <span id="regionNote"></span>
+                                <a id="regionSource" target="_blank" rel="noreferrer" hidden>查看当地资料</a>
+                            </p>
+                        </div>
+                        <div class="field">
+                            <label for="years"
+                                >累计缴费年限 <span class="hint">不是简单日历工龄</span></label
+                            >
+                            <div class="control">
+                                <input
+                                    id="years"
+                                    type="number"
+                                    min="1"
+                                    max="60"
+                                    step=".5"
+                                    value="30"
+                                /><span class="unit">年</span>
+                            </div>
+                            <p class="help">含实际缴费与认可年限。</p>
+                        </div>
+                        <div class="field">
+                            <label for="salary"
+                                >你平时按多少钱交养老保险？ <span class="hint">看自己的缴费记录</span></label
+                            >
+                            <div class="control">
+                                <input
+                                    id="salary"
+                                    type="number"
+                                    min="0"
+                                    step="0.01" aria-describedby="baseHelp"
+                                    value="10000"
+                                /><span class="unit">元</span>
+                            </div>
+                            <p class="help" id="baseHelp">看社保缴费记录里的“缴费基数”。比如一直按每月 6000 元交，这里就填 6000。如果各年不同，填缴费期间的月平均值。</p>
+                        </div>
+                        <div class="field">
+                            <label for="local"
+                                >当地算养老金用的参考金额 <span class="hint">看退休地和年份</span></label
+                            >
+                            <div class="control">
+                                <input
+                                    id="local"
+                                    type="number"
+                                    min="1000"
+                                    step="0.01"
+                                    required
+                                    value="8000"
+                                /><span class="unit">元</span>
+                            </div>
+                            <p class="help">当地用这个数来算基础养老金，正式名称叫“月计发基数”。选地区后，如果已带出退休当年的数字，直接用就行。你每月能领多少，请看估算结果。</p>
+                        </div>
+                        <div class="field">
+                            <label for="age"
+                                >预计退休年龄 <span class="hint">影响计发月数</span></label
+                            >
+                            <div class="control"><select id="age"></select></div>
+                            <p class="help">实际年龄受出生年月、性别和政策影响。</p>
+                        </div>
+                        <hr class="sep" />
+                        <div class="field full">
+                            <label>退休时，个人账户里预计有多少钱？</label>
+                            <p class="help">这笔钱用来估算你每月能领的个人账户养老金。不清楚余额，可以跳过勾选，让网站根据上面填写的缴费基数和缴费年限估算。</p>
+                            <label class="toggle" for="manual">
+                                <input id="manual" type="checkbox" />
+                                我想自己填写预计退休时的余额
+                            </label>
+                        </div>
+                        <div class="field full hidden" id="balanceWrap">
+                            <div class="control">
+                                <input
+                                    id="balance"
+                                    type="number"
+                                    min="0"
+                                    step="1000"
+                                    placeholder="例如 180000"
+                                /><span class="unit">元</span>
+                            </div>
+                            <p class="help">
+                                如果你查到的是今天的余额，还要加上从现在到退休预计存入的钱和利息。
+                            </p>
+                        </div>
+                        <div class="field full" id="rateWrap">
+                            <label for="rate">估算时，假设账户每年有多少利息？</label>
+                            <div class="control">
+                                <input
+                                    id="rate"
+                                    type="number"
+                                    min="0"
+                                    max="12"
+                                    step=".1"
+                                    value="2"
+                                /><span class="unit">%</span>
+                            </div>
+                            <p class="help">可以保留默认的 2%。按这个假设，1 万元存满一年约有 200 元利息。这个比例只用于估算账户余额。</p>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button class="button secondary" type="reset">恢复示例</button
+                        ><button class="button primary" type="submit">更新估算结果 →</button>
+                    </div>
+                </form>
+                <section class="card result" aria-live="polite">
+                    <div class="small">预计每月基本养老金</div>
+                    <div class="total" id="total">— <span>元 / 月</span></div>
+                    <div class="small">以填写假设估算，实际待遇以社保经办机构核定为准。</div>
+                    <div class="break">
+                        <div class="row">
+                            <span>基础养老金<small>年限、缴费指数与当地基数</small></span
+                            ><b id="basic">—</b>
+                        </div>
+                        <div class="row">
+                            <span>个人账户养老金<small>账户储存额 ÷ 计发月数</small></span
+                            ><b id="personal">—</b>
+                        </div>
+                    </div>
+                    <div class="formula" id="formula">—</div>
+                    <div class="alert" id="alert"></div>
+                    <div class="disclaimer">
+                        简化估算，未计算过渡性养老金、地方加发、缴费中断、工资增长及未来政策调整；不构成待遇核定或投资建议。
+                    </div>
+                </section>
+            </div>
+            <aside class="sources" aria-label="养老金估算说明">
+                <b>每月养老金是怎么算的？</b>
+                <p>页面金额是基础养老金和个人账户养老金之和。过渡性养老金、地方加发等待遇未计入。</p>
+                <p><b>参保方式</b>　以个人身份参加职工养老保险的自由职业者、无雇工个体工商户，与单位职工采用相同的待遇计发办法。若先后以不同身份参保，请合并填写职工养老保险缴费记录，同一月份只计一次。<a href="https://www.pds.gov.cn/contents/22139/383272.html" target="_blank" rel="noreferrer">人社部门参保说明</a></p>
+                <p><b>地区和年份</b>　按养老金待遇领取地选择地区。自动带入的月计发基数对应页面标注的年份，依据可点选项下方的“查看当地资料”。手填时，请使用当地适用于退休当年的月计发基数。</p>
+                <p><b>基础养老金</b>　月计发基数 ×（1 ＋ 估算缴费指数）÷ 2 × 缴费年限 × 1%。本站用“月平均缴费基数 ÷ 月计发基数”粗估缴费指数，并将结果限制在 0.6 至 3 之间。实际核定的指数可能不同。</p>
+                <p><b>个人账户养老金</b>　退休时的账户余额 ÷ 退休年龄对应的计发月数。计发月数用来折算月金额，不限制领取年数。未手填余额时，本站假设每月末按月平均缴费基数的 8% 入账，并将填写的年收益率折算为月收益率计算利息。</p>
+            </aside>
+            <div class="foot">所有计算在本机浏览器完成，输入内容不会上传或保存。</div>
+        </main>
+        <script>
+            // 按退休年龄查计发月数，用来计算每月的个人账户养老金。
+            const divisors = {
+                    40: 233,
+                    41: 230,
+                    42: 226,
+                    43: 223,
+                    44: 220,
+                    45: 216,
+                    46: 212,
+                    47: 208,
+                    48: 204,
+                    49: 199,
+                    50: 195,
+                    51: 190,
+                    52: 185,
+                    53: 180,
+                    54: 175,
+                    55: 170,
+                    56: 164,
+                    57: 158,
+                    58: 152,
+                    59: 145,
+                    60: 139,
+                    61: 132,
+                    62: 125,
+                    63: 117,
+                    64: 109,
+                    65: 101,
+                    66: 93,
+                    67: 84,
+                    68: 75,
+                    69: 65,
+                    70: 56,
+                },
+                byId = (id) => document.getElementById(id),
+                ageSelect = byId("age");
+            for (let n = 40; n <= 70; n++) {
+                const o = document.createElement("option");
+                o.value = n;
+                o.textContent = n + " 岁（" + divisors[n] + " 个月）";
+                if (n === 60) o.selected = true;
+                ageSelect.append(o);
+            }
+            const money = (x) =>
+                    new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 0 }).format(
+                        Math.max(0, Math.round(x)),
+                    ),
+                toggle = byId("manual"),
+                form = byId("form");
+            const region = byId("region");
+            const localBase = byId("local");
+
+            // 切换待遇领取地时，一起更新基数、适用年份和资料来源。
+            const coverage = byId("coverage");
+            function updateCoverageHelp() {
+                const explanations = {
+                    employee: "看社保缴费记录里的“缴费基数”。比如一直按每月 6000 元交，这里就填 6000。如果各年不同，填缴费期间的月平均值。",
+                    freelance: "在个人社保缴费记录中找“缴费基数”。例如按 6000 元基数参保，就填 6000；接单收入和银行卡实际扣款都不用填。",
+                    business: "在业主本人的社保缴费记录中找“缴费基数”。例如按 6000 元基数参保，就填 6000；店铺营业额、利润和实际扣款都不用填。",
+                };
+                const payer = {
+                    employee: "单位和个人共同缴费。",
+                    freelance: "自由职业者以个人身份参保，由自己承担养老保险费。",
+                    business: "无雇工的个体工商户以业主个人身份参保，由业主自己承担养老保险费。",
+                };
+                byId("coverageHelp").textContent = payer[coverage.value] +
+                    "缴费基数、年限等条件相同时，三种方式算出的月养老金相同。";
+                byId("baseHelp").textContent = explanations[coverage.value];
+            }
+            coverage.addEventListener("change", updateCoverageHelp);
+
+            function applyRegion() {
+                const { base, year, source, note } = region.selectedOptions[0].dataset;
+                localBase.readOnly = Boolean(base);
+                localBase.value = region.value ? base : localBase.defaultValue;
+                byId("regionSource").hidden = !source;
+                if (source) byId("regionSource").href = source;
+                let description = "";
+                if (region.value) {
+                    description = base
+                        ? year + "当地算养老金用的参考金额是 " + base + " 元/月。" + note
+                        : note + "请在下方填写退休地公布的当年“月计发基数”。";
+                }
+                byId("regionNote").textContent = description;
+                calc();
+            }
+
+            region.addEventListener("change", applyRegion);
+            function mode() {
+                byId("balanceWrap").classList.toggle("hidden", !toggle.checked);
+                byId("rateWrap").classList.toggle("hidden", toggle.checked);
+            }
+            function calc() {
+                const years = Number(byId("years").value),
+                    salary = Number(byId("salary").value),
+                    local = Number(byId("local").value),
+                    age = Number(ageSelect.value),
+                    manual = toggle.checked,
+                    alert = byId("alert");
+                alert.classList.remove("show");
+                if (!years || years < 1 || !salary || salary < 0 || !local || local <= 0) {
+                    for (const id of ["total", "basic", "personal", "formula"]) {
+                        byId(id).textContent = "—";
+                    }
+                    alert.textContent = "请检查年限、缴费基数和当地计发基数。";
+                    alert.classList.add("show");
+                    return;
+                }
+                // 用月平均缴费基数与当地计发基数的比值估算缴费指数，并将其限制在 0.6 到 3 之间。
+                const raw = salary / local,
+                    index = Math.max(0.6, Math.min(3, raw)),
+                    basic = ((local * (1 + index)) / 2) * years * 0.01;
+                let balance, assumption;
+                if (manual) {
+                    balance = Number(byId("balance").value);
+                    if (!Number.isFinite(balance) || balance < 0) {
+                        alert.textContent = "请填写有效的个人账户余额。";
+                        alert.classList.add("show");
+                        return;
+                    }
+                    assumption = "采用手填账户余额 " + money(balance) + " 元。";
+                } else {
+                    // 没有手填余额时，假设每月末按缴费工资的 8% 入账，并按月计息。
+                    const rate = Math.max(0, Math.min(12, Number(byId("rate").value) || 0)) / 100,
+                        mr = Math.pow(1 + rate, 1 / 12) - 1,
+                        months = Math.round(years * 12),
+                        deposit = salary * 0.08;
+                    balance =
+                        mr === 0
+                            ? deposit * months
+                            : (deposit * (Math.pow(1 + mr, months) - 1)) / mr;
+                    assumption =
+                        "按月缴费基数 " +
+                        money(salary) +
+                        " 元的 8% 入账，年收益率假设 " +
+                        (rate * 100).toFixed(1) +
+                        "%。";
+                }
+                const personal = balance / divisors[age];
+                byId("total").innerHTML = money(basic + personal) + " <span>元 / 月</span>";
+                byId("basic").textContent = money(basic) + " 元";
+                byId("personal").textContent = money(personal) + " 元";
+                byId("formula").textContent =
+                    (region.value || "自定义") + " · " +
+                    (localBase.readOnly ? region.selectedOptions[0].dataset.year + "参考基数 " : "手填基数 ") +
+                    local + " 元/月；平均缴费指数约 " +
+                    index.toFixed(2) +
+                    "；计发月数 " +
+                    divisors[age] +
+                    "；" +
+                    assumption;
+                if (raw < 0.6 || raw > 3) {
+                    alert.textContent =
+                        "本次已将缴费指数限制在 0.6 至 3.0；各地基数上下限可能不同。";
+                    alert.classList.add("show");
+                }
+            }
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                calc();
+            });
+            // 等浏览器恢复表单默认值后，再用示例数据重新计算。
+            form.addEventListener("reset", () =>
+                setTimeout(() => {
+                    updateCoverageHelp();
+                    toggle.checked = false;
+                    mode();
+                    applyRegion();
+                }, 0),
+            );
+            toggle.addEventListener("change", mode);
+            ageSelect.addEventListener("change", calc);
+            mode();
+            applyRegion();
+        </script>
+    </body>
+</html>
